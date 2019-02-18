@@ -23,3 +23,5 @@ def is_monochrome(model):
     if model.startswith("QL-"):
         return False
     return True
+
+print_label(image="./templates/test.bmp")
