@@ -1,4 +1,18 @@
 from brother_ql_send import print_label
+import socketio
+
+URL = "http://localhost"
+PORT = "3000"
+
+socket = socketio.Client()
+
+@socket.on("connect")
+def init():
+    print()
+
+@socket.on("data")
+def receive(data):
+    pass
 
 text = (
     {
@@ -23,4 +37,6 @@ qr = {
     "location": (900, 450)
 }
 
-print_label(text=text, qr=qr)
+# print_label(text=text, qr=qr)
+
+socket.connect(URL + ":" + PORT)

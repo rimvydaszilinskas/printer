@@ -50,6 +50,8 @@ def write_text(target_file, text, location, fill=(255, 255, 255), font="./fonts/
     return img
 
 def create_card(target_file, text, qr=None, font="./fonts/Sanseriffic.otf", save=False, dest_filename=None):
+    # returns image item if save is False
+    # returns filepath to the file saved if save is True
     img = Image.open(target_file)
 
     # if text is a touple then iterate and print all text on the template

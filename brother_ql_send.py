@@ -12,6 +12,7 @@ def print_label(text, qr, printer_identifier="/dev/usb/lp0", template="./templat
     qlr = BrotherQLRaster(printer)
     qlr.exception_on_warning = True
 
+    # convert takes only an array
     images = [card]
 
     instructions = convert(qlr=qlr, images=images, label="62", cut=cut, red=red, rotate=rotate)

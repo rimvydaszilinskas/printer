@@ -23,4 +23,4 @@ qr = {
     "location": (900, 450)
 }
 
-create_card(target_file="test.bmp", qr=qr, text=text, save=True)
+create_card(target_file="templates/test.bmp", qr=qr, text=text, save=True)

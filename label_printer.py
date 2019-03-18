@@ -24,4 +24,4 @@ def is_monochrome(model):
         return False
     return True
 
-print_label(image="./templates/test.bmp")
+# print_label(image="./templates/test.bmp")
