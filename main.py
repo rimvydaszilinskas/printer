@@ -1,19 +1,11 @@
 from brother_ql_send import print_label
-import socketio
+import websocket
+import json
 
-URL = "http://localhost"
+URL = "ws://localhost"
 PORT = "3000"
 
-socket = socketio.Client()
-
-@socket.on("connect")
-def init():
-    print()
-
-@socket.on("data")
-def receive(data):
-    pass
-
+# dummy preset data
 text = (
     {
         "text":"Name LastName",
@@ -37,6 +29,21 @@ qr = {
     "location": (900, 450)
 }
 
-# print_label(text=text, qr=qr)
+ws = websocket.create_connection(URL + ":" + PORT)
 
-socket.connect(URL + ":" + PORT)
+# should send some identifier data here
+
+while True:
+    response = ws.recv()
+    resp = json.loads(response)
+
+    if "name" not in resp or "position" not in resp:
+        print("No name and/or position supplied")
+        continue
+
+    text[0]["text"] = resp["name"]
+    text[1]["text"] = resp["position"]
+    print_label(text=text, qr=qr)
+
+
+ws.close()
