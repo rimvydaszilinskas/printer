@@ -37,12 +37,12 @@ while True:
     response = ws.recv()
     resp = json.loads(response)
 
-    if "name" not in resp or "position" not in resp:
+    if "full_name" not in resp or "company_name" not in resp:
         print("No name and/or position supplied")
         continue
 
-    text[0]["text"] = resp["name"]
-    text[1]["text"] = resp["position"]
+    text[0]["text"] = resp["full_name"]
+    text[1]["text"] = resp["company_name"]
     print_label(text=text, qr=qr)
 
 
