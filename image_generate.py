@@ -27,7 +27,7 @@ def paste_image(target, img, location):
     target.paste(img, location)
     return target
 
-def write_text(target_file, text, location, fill=(255, 255, 255), font="./fonts/theboldfont.ttf", font_size=16, save=False, dest_filename=None):
+def write_text(target_file, text, location, fill=(255, 255, 255), font="./fonts/Sanseriffic.otf", font_size=16, save=False, dest_filename=None):
     # Write on top of image
     if isinstance(target_file, str):
         img = Image.open(target_file)
@@ -49,7 +49,7 @@ def write_text(target_file, text, location, fill=(255, 255, 255), font="./fonts/
 
     return img
 
-def create_card(target_file, text, qr=None, font="./fonts/Sanseriffic.otf", save=False, dest_filename=None):
+def create_card(target_file, text, qr=None, font="./fonts/BalooChettan-Regular.ttf", save=False, dest_filename=None):
     # returns image item if save is False
     # returns filepath to the file saved if save is True
     img = Image.open(target_file)
@@ -57,9 +57,24 @@ def create_card(target_file, text, qr=None, font="./fonts/Sanseriffic.otf", save
     # if text is a touple then iterate and print all text on the template
     if type(text) is tuple:
         for output in text:
-            img = write_text(target_file=img, text=output["text"], fill=output["fill"], location=output["location"], font_size=output["font_size"], save=False)
+            img = write_text(
+                target_file=img, 
+                text=output["text"],
+                fill=output["fill"],
+                location=output["location"], 
+                font_size=output["font_size"], 
+                save=False, 
+                font=font
+            )
     else:
-        img = write_text(target_file=img, text=text["text"], fill=text["fill"], location=text["location"], font_size=text["font_size"], save=False)
+        img = write_text(
+            target_file=img, 
+            text=text["text"], 
+            fill=text["fill"], 
+            location=text["location"], 
+            font_size=text["font_size"], 
+            save=False
+        )
 
     def __paste_qr(QR, img):
         # paste in the qr code in the down right corner
@@ -87,8 +102,8 @@ def create_card(target_file, text, qr=None, font="./fonts/Sanseriffic.otf", save
             img.save("./output/" + dest_filename)
             return "./ouput/" + dest_filename
         else:
-            img.save("./output/default.bmp")
-            return "./output/default.bpm"
+            img.save("./output/default.png")
+            return "./output/default.png"
     else:
         return img
 

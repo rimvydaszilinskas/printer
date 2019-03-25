@@ -4,10 +4,9 @@ from brother_ql.conversion import convert
 from brother_ql.raster import BrotherQLRaster
 from image_generate import create_card
 
-def print_label(text, qr=None, label="62",printer_identifier="/dev/usb/lp0", template="./templates/test.bmp", printer="QL-810W", cut=True, red=True, dpi_600=False, rotate="0"):
+def print_label(text, qr=None, label="54",printer_identifier="/dev/usb/lp0", template="./templates/test.png", printer="QL-810W", cut=True, red=True, dpi_600=True, rotate="0"):
     # create a card from the template
     card = create_card(target_file=template, text=text, qr=qr, save=False)
-
     # convert the card to raster
     qlr = BrotherQLRaster(printer)
     qlr.exception_on_warning = True
@@ -20,4 +19,5 @@ def print_label(text, qr=None, label="62",printer_identifier="/dev/usb/lp0", tem
     backend_identifier = guess_backend(printer_identifier)
 
     # send the commands to the printer
+    print("Sending instructions to print")
     send(instructions=instructions, printer_identifier=printer_identifier, backend_identifier=backend_identifier)

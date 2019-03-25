@@ -14,13 +14,13 @@ text = (
     {
         "text":"full_name",
         "fill":(0, 0, 0),
-        "location":(38, 250),
+        "location":(90, 385),
         "font_size":84
     },
     {
         "text":"company_name",
         "fill":(0, 0, 0),
-        "location":(38, 400),
+        "location":(90, 457),
         "font_size":36
     }
 )
@@ -44,7 +44,7 @@ def on_message(ws, message):
         text[0]["text"] = response["message"]["full_name"]
         text[1]["text"] = response["message"].get("company_name", "")
         # rotate 90 degrees to print it full size
-        print_label(text=text, rotate="90")
+        print_label(text=text, rotate="90", label="54")
 
 def on_error(ws, error):
     print(error)
@@ -53,7 +53,7 @@ def on_close(ws):
     print("### closed ###")
 
 def on_open(ws):
-    print("Opened")  
+    print("Opened")
 
 ws = websocket.WebSocketApp(SOCKET_URL + "/" + PROJECT_IDENTIFIER + "/" + PRINTER_IDENTIFIER + "/",
                             on_message=on_message,
