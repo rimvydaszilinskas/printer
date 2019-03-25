@@ -16,7 +16,7 @@ text = (
         "font_size":84
     },
     {
-        "text":"Developer",
+        "text":"Position",
         "fill":(0, 0, 0),
         "location":(38, 400),
         "font_size":36
@@ -31,7 +31,7 @@ text = (
 #     "location": (900, 450)
 # }
 
-ws = websocket.create_connection(SOCKET_URL + "/" + PROJECT_IDENTIFIER + "/" + PRINTER_IDENTIFIER)
+ws = websocket.create_connection(SOCKET_URL + "/" + PROJECT_IDENTIFIER + "/" + PRINTER_IDENTIFIER + "/")
 
 # should send some identifier data here
 
@@ -39,13 +39,14 @@ while True:
     response = ws.recv()
     resp = json.loads(response)
 
-    if "full_name" not in resp or "company_name" not in resp:
+    print(resp)
+
+    if "full_name" not in resp["message"] or "company_name" not in resp["message"]:
         print("No name and/or position supplied")
         continue
 
-    text[0]["text"] = resp["full_name"]
-    text[1]["text"] = resp["company_name"]
-    
+    text[0]["text"] = resp["message"]["full_name"]
+    text[1]["text"] = resp["message"].get("company_name", "")
     # rotate 90 degrees to print it full size
     print_label(text=text, rotate="90")
 
