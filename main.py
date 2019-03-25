@@ -44,7 +44,7 @@ def on_message(ws, message):
         text[0]["text"] = response["message"]["full_name"]
         text[1]["text"] = response["message"].get("company_name", "")
         # rotate 90 degrees to print it full size
-        print_label(text=text, rotate="90", label="54", template="./templates/Untitled.bmp")
+        print_label(text=text, rotate="90")
 
 def on_error(ws, error):
     print(error)
