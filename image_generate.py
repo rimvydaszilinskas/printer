@@ -27,7 +27,7 @@ def paste_image(target, img, location):
     target.paste(img, location)
     return target
 
-def write_text(target_file, text, location, fill=(255, 255, 255), font="./fonts/Sanseriffic.otf", font_size=16, save=False, dest_filename=None):
+def write_text(target_file, text, location, fill=(255, 255, 255), font="./fonts/theboldfont.ttf", font_size=16, save=False, dest_filename=None):
     # Write on top of image
     if isinstance(target_file, str):
         img = Image.open(target_file)
