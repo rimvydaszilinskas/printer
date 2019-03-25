@@ -20,4 +20,6 @@ def print_label(text, qr=None, label="62",printer_identifier="/dev/usb/lp0", tem
     backend_identifier = guess_backend(printer_identifier)
 
     # send the commands to the printer
-    send(instructions=instructions, printer_identifier=printer_identifier, backend_identifier=backend_identifier)
+    status = send(instructions=instructions, printer_identifier=printer_identifier, backend_identifier=backend_identifier)
+
+    return status
