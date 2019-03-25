@@ -84,8 +84,8 @@ def create_card(target_file, text, qr=None, font="./fonts/Sanseriffic.otf", save
 
     if save:
         if dest_filename is not None and isinstance(dest_filename, str):
-            img.save(f"./output/{dest_filename}")
-            return f"./ouput/{dest_filename}"
+            img.save("./output/" + dest_filename)
+            return "./ouput/" + dest_filename
         else:
             img.save("./output/default.bmp")
             return "./output/default.bpm"
