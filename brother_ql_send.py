@@ -4,7 +4,7 @@ from brother_ql.conversion import convert
 from brother_ql.raster import BrotherQLRaster
 from image_generate import create_card
 
-def print_label(text, qr=None, printer_identifier="/dev/usb/lp0", template="./templates/test.bmp", printer="QL-810W", cut=True, red=True, dpi_600=True, rotate="0"):
+def print_label(text, qr=None, label="62",printer_identifier="/dev/usb/lp0", template="./templates/test.bmp", printer="QL-810W", cut=True, red=True, dpi_600=True, rotate="0"):
     # create a card from the template
     card = create_card(target_file=template, text=text, qr=qr, save=False)
 
@@ -15,7 +15,7 @@ def print_label(text, qr=None, printer_identifier="/dev/usb/lp0", template="./te
     # convert takes only an array
     images = [card]
 
-    instructions = convert(qlr=qlr, images=images, label="62", cut=cut, red=red, rotate=rotate)
+    instructions = convert(qlr=qlr, images=images, label=label, cut=cut, red=red, rotate=rotate)
     # get the backend identifier
     backend_identifier = guess_backend(printer_identifier)
 
