@@ -102,7 +102,7 @@ def create_card(target_file, text, qr=None, font="./fonts/BalooChettan-Regular.t
             img.save("./output/" + dest_filename)
             return "./ouput/" + dest_filename
         else:
-            img.save("./output/default.png")
+            img.save("./output/default1.png")
             return "./output/default.png"
     else:
         return img

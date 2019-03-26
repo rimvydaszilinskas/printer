@@ -1,6 +1,7 @@
 from brother_ql_send import print_label
 import websocket
 import json
+from image_generate import create_card
 
 # Requires pklaus/brother_ql library to be installed
 # https://github.com/pklaus/brother_ql
@@ -20,7 +21,7 @@ text = (
     {
         "text":"company_name",
         "fill":(0, 0, 0),
-        "location":(90, 457),
+        "location":(90, 470),
         "font_size":36
     }
 )
@@ -43,14 +44,17 @@ def on_message(ws, message):
     else:
         text[0]["text"] = response["message"]["full_name"]
         text[1]["text"] = response["message"].get("company_name", "")
+        
         # rotate 90 degrees to print it full size
-        print_label(text=text, rotate="90", label="54")
+        print_label(text=text, rotate="90", label="54", red=False)
+        
+#        create_card(target_file="./templates/test.png", text=text, save=True)
 
 def on_error(ws, error):
     print(error)
 
 def on_close(ws):
-    print("### closed ###")
+    print("Closed")
 
 def on_open(ws):
     print("Opened")
