@@ -107,4 +107,22 @@ def create_card(target_file, text, qr=None, font="./fonts/BalooChettan-Regular.t
     else:
         return img
 
+# def write_text(target_file, text, location, fill=(255, 255, 255), font="./fonts/Sanseriffic.otf", font_size=16, save=False, dest_filename=None):
+
+def create_card_middle(target_file, text, top=100, fill=(255, 255, 255), font_size=80, font_location="./fonts/Lato-Bold.ttf"):
+    # prints the name in the middle of image, pushed down by <top>px
+    img = Image.open(target_file)
+
+    draw = ImageDraw.Draw(img)
+
+    W, H = img.size
+
+    font = ImageFont.truetype(font=font_location, size=font_size)
+    w, h = draw.textsize(text, font=font)
+    
+    location = ((W - w) / 2, top)
+
+    draw.text(xy=location, text=text, fill=fill, font=font)
+
+    return img
 # create_card(target_file="test.bmp", qr=qr, text=text, save=True)

@@ -7,24 +7,24 @@ from image_generate import create_card
 # https://github.com/pklaus/brother_ql
 
 PRINTER_IDENTIFIER = "1de5cba17b2b4ea0a21a40bddd6df9c1"
-PROJECT_IDENTIFIER = "105fcb85bce1441d9e1131443bd7af26"
+PROJECT_IDENTIFIER = "b62dd5d67fca4a32ba2dbcf9963bcc48"
 SOCKET_URL = "ws://ticketfix.moome.net/ws/print"
 
 # dummy preset data
-text = (
-    {
-        "text":"full_name",
-        "fill":(0, 0, 0),
-        "location":(90, 385),
-        "font_size":84
-    },
-    {
-        "text":"company_name",
-        "fill":(0, 0, 0),
-        "location":(90, 470),
-        "font_size":36
-    }
-)
+# text = (
+#     {
+#         "text":"full_name",
+#         "fill":(0, 0, 0),
+#         "location":(90, 385),
+#         "font_size":84
+#     },
+#     {
+#         "text":"company_name",
+#         "fill":(0, 0, 0),
+#         "location":(90, 470),
+#         "font_size":36
+#     }
+# )
 
 # qr = {
 #     "data": "http://google.com",
@@ -42,8 +42,9 @@ def on_message(ws, message):
     if "full_name" not in response["message"] or "company_name" not in response["message"]:
         print("No name and/or position supplied")
     else:
-        text[0]["text"] = response["message"]["full_name"]
-        text[1]["text"] = response["message"].get("company_name", "")
+        # text[0]["text"] = response["message"]["full_name"]
+        # text[1]["text"] = response["message"].get("company_name", "")
+        text = response["message"]["full_name"]
         
         # rotate 90 degrees to print it full size
         print_label(text=text, rotate="90", label="54", red=False)
