@@ -3,19 +3,20 @@ from image_generate import create_card
 
 text = (
     {
-        "text":"Rimvydas Zilinskas",
+        "text":"",
         "fill":(0, 0, 0),
-        "location":(90, 385),
+        "location":(0, 0),
         "font_size":64
     },
     {
-        "text":"Developer",
+        "text":"",
         "fill":(0, 0, 0),
-        "location":(90, 457),
+        "location":(0, 0),
         "font_size":24
     }
 )
 
-print_label(text=text, rotate="90", label="54")
+print_label(text=text, rotate="90", label="54", red=False, template="./templates/tedx.png", dpi_600=True, cut=False)
 
-# create_card(target_file="./templates/test.png", text=text, save=True)
+print_label(text=text, rotate="90", label="54", red=False, template="./templates/tedx.png", dpi_600=True)
+# create_card(target_file="./templates/tedx.png", text=text, save=True)

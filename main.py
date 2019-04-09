@@ -7,7 +7,7 @@ from image_generate import create_card
 # https://github.com/pklaus/brother_ql
 
 PRINTER_IDENTIFIER = "1de5cba17b2b4ea0a21a40bddd6df9c1"
-PROJECT_IDENTIFIER = "ceb26cac1fa2499cb782fbe26c6c72cf"
+PROJECT_IDENTIFIER = "105fcb85bce1441d9e1131443bd7af26"
 SOCKET_URL = "ws://ticketfix.moome.net/ws/print"
 
 # dummy preset data
