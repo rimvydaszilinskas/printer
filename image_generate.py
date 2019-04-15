@@ -49,6 +49,19 @@ def write_text(target_file, text, location, fill=(255, 255, 255), font="./fonts/
 
     return img
 
+def write_text_middle(target_file, text, y, fill=(255, 255, 255), font="./fonts/Sanseriffic.otf", font_size=16, save=False, dest_filename=None):
+    draw = ImageDraw.Draw(target_file)
+
+    font = ImageFont.truetype(font, font_size)
+
+    W, H = target_file.size
+
+    w, h = draw.textsize(text, font=font)
+
+    location = ((W - w) / 2, y)
+
+    draw.text(xy=location, text=text, fill=fill, font=font)
+
 def create_card(target_file, text, qr=None, font="./fonts/BalooChettan-Regular.ttf", save=False, dest_filename=None):
     # returns image item if save is False
     # returns filepath to the file saved if save is True
@@ -124,5 +137,15 @@ def create_card_middle(target_file, text, top=100, fill=(255, 255, 255), font_si
 
     draw.text(xy=location, text=text, fill=fill, font=font)
 
+    return img
+
+def generate_card(target_file, text):
+    img = Image.open(target_file)
+
+    for txt in text:
+        if txt["align"] == "center":
+            write_text_middle(img, txt["text"], y=txt["location"][1], font_size=txt["font_size"], fill=(0,0,0))
+        elif txt["align"] == "right":
+            write_text(img, txt["text"], location=txt["location"], fill=(0, 0, 0), font_size=txt["font_size"])
     return img
 # create_card(target_file="test.bmp", qr=qr, text=text, save=True)

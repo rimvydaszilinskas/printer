@@ -1,70 +1,204 @@
-from brother_ql_send import print_label
-import websocket
+import requests
 import json
+import urllib.request
+import os
+import websocket
+from brother_ql_send import print_label
 from image_generate import create_card
 
-# Requires pklaus/brother_ql library to be installed
-# https://github.com/pklaus/brother_ql
+# Global variables for use in callbacks
+TEXT_FIELDS = [
+    {
+        "text": "full_name",
+        "placeholder": "full_name",
+        "location": (0, 0),
+        "align": "right",
+        "font_size": 84
+    }
+]
 
-PRINTER_IDENTIFIER = "1de5cba17b2b4ea0a21a40bddd6df9c1"
-PROJECT_IDENTIFIER = "b62dd5d67fca4a32ba2dbcf9963bcc48"
-SOCKET_URL = "ws://ticketfix.moome.net/ws/print"
+PRINT_CONFIG = {
+    "rotate": "90",
+    "label": "62",
+    "red": False,
+    "dpi_600": False,
+    "template": "./templates/default.png",
+    "printer": "QL-810W",
+    "cut": True
+}
 
-# dummy preset data
-# text = (
-#     {
-#         "text":"full_name",
-#         "fill":(0, 0, 0),
-#         "location":(90, 385),
-#         "font_size":84
-#     },
-#     {
-#         "text":"company_name",
-#         "fill":(0, 0, 0),
-#         "location":(90, 470),
-#         "font_size":36
-#     }
-# )
+def dump_data(printer_to_dump):
+    # update device.json file with printer_to_dump
+    printer = {
+        "id": printer_to_dump.get("id"),
+        "identifier": printer_to_dump.get("identifier"),
+        "createdAt": printer_to_dump.get("createdAt"),
+        "image_url": printer_to_dump.get("image_url", None)
+    }
 
-# qr = {
-#     "data": "http://google.com",
-#     "box_size": 8,
-#     "border": 1,
-#     "inverted": False,
-#     "location": (900, 450)
-# }
+    with open("./conf/device.json", "w") as outfile:
+        json.dump(printer, outfile)
 
+def cleanup_templates(directory="./templates"):
+    # deletes all the files that re not default.png
+    for root, dirs, files in os.walk(directory):  
+        for filename in files:
+            if filename != "default.png" or filename != "template.bmp":
+                os.remove("./images/" + filename)
+
+def template_exist(event_id):
+    return os.path.isfile("./templates/" + event_id + ".png")
+
+def download_template(url, event_id):
+    urllib.request.urlretrieve(url, "./templates/" + event_id + ".png")
+    return "./templates/" + event_id + ".png"
 
 def on_message(ws, message):
     response = json.loads(message)
-    print(response)
+    text_to_print = []
+    skip = False
 
-    if "full_name" not in response["message"] or "company_name" not in response["message"]:
-        print("No name and/or position supplied")
-    else:
-        # text[0]["text"] = response["message"]["full_name"]
-        # text[1]["text"] = response["message"].get("company_name", "")
-        text = response["message"]["full_name"]
-        
-        # rotate 90 degrees to print it full size
-        print_label(text=text, rotate="90", label="54", red=False)
-        
-#        create_card(target_file="./templates/test.png", text=text, save=True)
+    for text in TEXT_FIELDS:
+        if text.get("placeholder") not in response["message"]:
+            skip = True
+        else:
+            text['text'] = response["message"][text.get("placeholder")]
+            text_to_print.append(text)
+
+    if not skip:
+        print_label(
+            text=text_to_print, 
+            qr=None, 
+            label=PRINT_CONFIG["label"], 
+            template=PRINT_CONFIG["template"], 
+            printer=PRINT_CONFIG["printer"],
+            cut=PRINT_CONFIG["cut"],
+            red=PRINT_CONFIG["red"],
+            dpi_600=PRINT_CONFIG['dpi_600'],
+            rotate="90")
 
 def on_error(ws, error):
-    print(error)
+    print("Error: " + error)
 
 def on_close(ws):
-    print("Closed")
+    print("Websocket closed")
 
 def on_open(ws):
-    print("Opened")
+    print("Websocket Opened")
 
-ws = websocket.WebSocketApp(SOCKET_URL + "/" + PROJECT_IDENTIFIER + "/" + PRINTER_IDENTIFIER + "/",
-                            on_message=on_message,
-                            on_error=on_error,
-                            on_close=on_close,
-                            on_open=on_open)
+def connect(URL, event_id, printer_id):
+    print_label(
+            text=TEXT_FIELDS, 
+            qr=None, 
+            label=PRINT_CONFIG["label"], 
+            template=PRINT_CONFIG["template"], 
+            printer=PRINT_CONFIG["printer"],
+            cut=PRINT_CONFIG["cut"],
+            red=PRINT_CONFIG["red"],
+            dpi_600=PRINT_CONFIG['dpi_600'],
+            rotate="90")
+    return
+    printer_id = printer_id.replace("-", "")
+    event_id = event_id.replace("-", "")
+    # main entry point to socket application
+    print("Connection: " + URL + "/" + event_id + "/" + printer_id)
+    ws = websocket.WebSocketApp(URL + "/" + event_id + "/" + printer_id,
+        on_message=on_message,
+        on_error=on_error,
+        on_close=on_close,
+        on_open=on_open)
+    
+    # force to keep connection alive
+    while True:
+        ws.run_forever()
 
-while True:
-    ws.run_forever()
+if __name__ == "__main__":
+    """
+    Init sequence:
+        1. Check the event last initialized
+        2. Load the data from the API
+        3. Compare if the data is already correct
+            3.1. If it is correct - continue
+            3.2. If it is not correct:
+                3.2.1. Delete old image.
+                3.2.1. Download the new image.
+                3.2.2. Replace the old log with the new event log.
+        4. Connect to socket
+    """
+    config_file = open("./conf/conf.json")
+    device_file = open("./conf/device.json")
+
+    config = json.load(config_file)
+    device = json.load(device_file)
+
+    config_file.close()
+    device_file.close()
+
+    request = requests.post(config.get("registration").get("URL"), data={ "secret": config.get("registration").get("secret"), "identifier": device.get("identifier")})
+
+    if request.status_code == 200:
+        print("status 200")
+        response = json.loads(request.text)
+
+        printer = response.get("response")
+
+        if device.get("id", None) != printer.get("id"):
+            # rewrite device json
+            dump_data(printer)
+
+        events = printer.get("events")
+
+        if len(events) != 0:
+            event = events[0]
+            event_id = event.get("id")
+            ticketbutler_id = event.get("tbid")
+            template = event.get("template")
+
+            if template is not None:
+                image_url = template.get("image", None)
+                PRINT_CONFIG["label"] = template.get("label", PRINT_CONFIG["label"])
+                PRINT_CONFIG["red"] = template.get("red", PRINT_CONFIG["red"])
+                PRINT_CONFIG["dpi_600"] = template.get("dpi_600", PRINT_CONFIG["dpi_600"])
+                # PRINT_CONFIG["font"] = template.get("font", None)
+                textfields = template.get("textfields")
+
+                
+                if len(textfields) != 0:
+                    TEXT_FIELDS = []
+
+                    for textfield in textfields:
+                        TEXT_FIELDS.append({
+                            "text": textfield.get("placeholder"),
+                            "placeholder": textfield.get("placeholder"),
+                            "location": (textfield.get("x"), textfield.get("y")),
+                            "font_size": textfield.get("font_size"),
+                            "align": textfield.get("align")
+                        })
+
+                # if template is not present download it
+                if image_url != None or image_url != "":
+                    PRINT_CONFIG["template"] = "./templates/" + event_id + ".png"
+
+                    if not template_exist(event_id=event_id) or device['image_url'] != image_url:
+                        PRINT_CONFIG["template"] = download_template(url=image_url, event_id=event_id)
+                        printer['image_url'] = image_url
+                        dump_data(printer)
+
+            connect(config['ticketbutler']['URL'], ticketbutler_id, printer.get('id'))
+    elif request.status_code == 201:
+        # Created status
+        # update the device.json and continue add delay for another request
+        print("Status 201: Created")
+
+        response = json.loads(request.text)
+
+        printer = response.get("response")
+
+        dump_data(printer)
+        print("Printer data dumped. Waiting for restart")
+    else:
+        # Error status
+        # Restart the application
+        response = json.loads(request.text)
+        print("Error " + {response.get('status')} + ": " + {response.get('message', response.get('response'))})
+        print("Waiting for restart")

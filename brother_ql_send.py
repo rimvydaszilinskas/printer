@@ -2,12 +2,14 @@ from brother_ql.backends.helpers import send
 from brother_ql.backends import guess_backend
 from brother_ql.conversion import convert
 from brother_ql.raster import BrotherQLRaster
-from image_generate import create_card, create_card_middle
+from image_generate import generate_card
 
 def print_label(text, qr=None, label="54",printer_identifier="/dev/usb/lp0", template="./templates/test.png", printer="QL-810W", cut=True, red=True, dpi_600=True, rotate="0"):
     # create a card from the template
     # card = create_card(target_file=template, text=text, qr=qr, save=False)
-    card = create_card_middle(target_file=template, text=text)
+    card = generate_card(target_file=template, text=text)
+
+    return card.save("./output/test.png")
     # convert the card to raster
     qlr = BrotherQLRaster(printer)
     qlr.exception_on_warning = True

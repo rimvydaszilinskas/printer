@@ -1,0 +1,9 @@
+{
+    "ticketbutler" : {
+        "URL": "ws://ticketfix.moome.net/ws/print"
+    },
+    "registration" : {
+        "URL": "https://fierce-citadel-44696.herokuapp.com/api/printer",
+        "secret": "B9y7aQXyNNqGbJju3Nzm08rAQdqaEIjVylswPq6T"
+    }
+}
