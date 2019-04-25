@@ -24,7 +24,8 @@ PRINT_CONFIG = {
     "dpi_600": False,
     "template": "./templates/default.png",
     "printer": "QL-810W",
-    "cut": True
+    "cut": True,
+    "qr": None
 }
 
 def dump_data(printer_to_dump):
@@ -38,6 +39,8 @@ def dump_data(printer_to_dump):
 
     with open("./conf/device.json", "w") as outfile:
         json.dump(printer, outfile)
+
+    print("New device data saved.")
 
 def cleanup_templates(directory="./templates"):
     # deletes all the files that re not default.png
@@ -87,21 +90,12 @@ def on_open(ws):
     print("Websocket Opened")
 
 def connect(URL, event_id, printer_id):
-    print_label(
-            text=TEXT_FIELDS, 
-            qr=None, 
-            label=PRINT_CONFIG["label"], 
-            template=PRINT_CONFIG["template"], 
-            printer=PRINT_CONFIG["printer"],
-            cut=PRINT_CONFIG["cut"],
-            red=PRINT_CONFIG["red"],
-            dpi_600=PRINT_CONFIG['dpi_600'],
-            rotate="90")
-    return
     printer_id = printer_id.replace("-", "")
     event_id = event_id.replace("-", "")
+
     # main entry point to socket application
     print("Connection: " + URL + "/" + event_id + "/" + printer_id)
+
     ws = websocket.WebSocketApp(URL + "/" + event_id + "/" + printer_id,
         on_message=on_message,
         on_error=on_error,
@@ -134,10 +128,10 @@ if __name__ == "__main__":
     config_file.close()
     device_file.close()
 
-    request = requests.post(config.get("registration").get("URL"), data={ "secret": config.get("registration").get("secret"), "identifier": device.get("identifier")})
+    request = requests.post(config.get("registration").get("URL"), data={ "secret": config.get("registration").get("secret"), "identifier": device.get("identifier") })
 
     if request.status_code == 200:
-        print("status 200")
+        print("Status 200: OK")
         response = json.loads(request.text)
 
         printer = response.get("response")
