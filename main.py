@@ -91,8 +91,11 @@ def on_open(ws):
 
 def connect(URL, event_id, printer_id):
     printer_id = printer_id.replace("-", "")
-    event_id = event_id.replace("-", "")
 
+    if event_id is not None:
+        event_id = event_id.replace("-", "")
+
+    
     # main entry point to socket application
     print("Connection: " + URL + "/" + event_id + "/" + printer_id)
 
