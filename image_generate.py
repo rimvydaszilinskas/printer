@@ -148,4 +148,3 @@ def generate_card(target_file, text):
         elif txt["align"] == "right":
             write_text(img, txt["text"], location=txt["location"], fill=(0, 0, 0), font_size=txt["font_size"])
     return img
-# create_card(target_file="test.bmp", qr=qr, text=text, save=True)

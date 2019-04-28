@@ -28,6 +28,9 @@ PRINT_CONFIG = {
     "qr": None
 }
 
+# Load image to be passed down
+TEMPLATE = None
+
 def dump_data(printer_to_dump):
     # update device.json file with printer_to_dump
     printer = {
@@ -41,6 +44,9 @@ def dump_data(printer_to_dump):
         json.dump(printer, outfile)
 
     print("New device data saved.")
+
+def load_image(): 
+    TEMPLATE = open('./templates/' + PRINT_CONFIG.get('template', './templates/default.png'))
 
 def cleanup_templates(directory="./templates"):
     # deletes all the files that re not default.png
@@ -64,6 +70,7 @@ def on_message(ws, message):
     for text in TEXT_FIELDS:
         if text.get("placeholder") not in response["message"]:
             skip = True
+            break
         else:
             text['text'] = response["message"][text.get("placeholder")]
             text_to_print.append(text)
@@ -94,8 +101,9 @@ def connect(URL, event_id, printer_id):
 
     if event_id is not None:
         event_id = event_id.replace("-", "")
-
-    
+    else:
+        print("No event id supplied. Exiting now")
+        exit()
     # main entry point to socket application
     print("Connection: " + URL + "/" + event_id + "/" + printer_id)
 
@@ -177,9 +185,16 @@ if __name__ == "__main__":
                     PRINT_CONFIG["template"] = "./templates/" + event_id + ".png"
 
                     if not template_exist(event_id=event_id) or device['image_url'] != image_url:
+                        print("Template does not exist.")
+
                         PRINT_CONFIG["template"] = download_template(url=image_url, event_id=event_id)
+                        print("Template downloaded")
+
                         printer['image_url'] = image_url
                         dump_data(printer)
+                        print("Printer data updated")
+                    else:
+                        print("Template exsists. No new data saved.")
 
             connect(config['ticketbutler']['URL'], ticketbutler_id, printer.get('id'))
     elif request.status_code == 201:
