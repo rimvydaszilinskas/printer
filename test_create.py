@@ -1,5 +1,5 @@
 from brother_ql_send import print_label
-from image_generate import create_card
+from image_generate import generate_card
 
 text = (
     {

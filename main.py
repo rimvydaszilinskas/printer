@@ -3,8 +3,10 @@ import json
 import urllib.request
 import os
 import websocket
+from gpiozero import LED
+
 from brother_ql_send import print_label
-from image_generate import create_card
+import guess_device
 
 # Global variables for use in callbacks
 TEXT_FIELDS = [
@@ -27,6 +29,8 @@ PRINT_CONFIG = {
     "cut": True,
     "qr": None
 }
+
+USE_GPIO = False
 
 # Load image to be passed down
 TEMPLATE = None
@@ -52,8 +56,8 @@ def cleanup_templates(directory="./templates"):
     # deletes all the files that re not default.png
     for root, dirs, files in os.walk(directory):  
         for filename in files:
-            if filename != "default.png" or filename != "template.bmp":
-                os.remove("./images/" + filename)
+            if filename != "default.png" and filename != "template.bmp":
+                os.remove(directory + '/' + filename)
 
 def template_exist(event_id):
     return os.path.isfile("./templates/" + event_id + ".png")
@@ -130,6 +134,9 @@ if __name__ == "__main__":
                 3.2.2. Replace the old log with the new event log.
         4. Connect to socket
     """
+
+    USE_GPIO = guess_device.guess_device() == "rpi"
+    
     config_file = open("./conf/conf.json")
     device_file = open("./conf/device.json")
 
@@ -182,6 +189,7 @@ if __name__ == "__main__":
 
                 # if template is not present download it
                 if image_url != None or image_url != "":
+                    cleanup_templates()
                     PRINT_CONFIG["template"] = "./templates/" + event_id + ".png"
 
                     if not template_exist(event_id=event_id) or device['image_url'] != image_url:
@@ -197,6 +205,9 @@ if __name__ == "__main__":
                         print("Template exsists. No new data saved.")
 
             connect(config['ticketbutler']['URL'], ticketbutler_id, printer.get('id'))
+        else:
+            # no active events
+            cleanup_templates()
     elif request.status_code == 201:
         # Created status
         # update the device.json and continue add delay for another request
@@ -207,6 +218,8 @@ if __name__ == "__main__":
         printer = response.get("response")
 
         dump_data(printer)
+
+        cleanup_templates()
         print("Printer data dumped. Waiting for restart")
     else:
         # Error status
