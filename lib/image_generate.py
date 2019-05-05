@@ -1,7 +1,7 @@
 import qrcode
 from PIL import Image, ImageFont, ImageDraw
 
-def generate_card(target_file, text, save=False, dest_filename=None):
+def generate_card(target_file, text, font=None, save=False, dest_filename=None):
     if isinstance(target_file, str):
         image_file = Image.open(target_file)
     else:
@@ -9,9 +9,9 @@ def generate_card(target_file, text, save=False, dest_filename=None):
 
     if isinstance(text, list):
         for txt in text:
-            write_text(txt, image_file)
+            write_text(txt, image_file, font_input=font)
     elif isinstance(text, dict):
-        write_text(text, image_file)
+        write_text(text, image_file, font_input=font)
 
     return image_file
 

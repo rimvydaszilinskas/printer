@@ -8,8 +8,7 @@ def print_label(text, qr=None, label="54",printer_identifier="/dev/usb/lp0", tem
     # create a card from the template
     # card = create_card(target_file=template, text=text, qr=qr, save=False)
     card = generate_card(target_file=template, text=text)
-
-    return card.save("./output/test.png")
+    
     # convert the card to raster
     qlr = BrotherQLRaster(printer)
     qlr.exception_on_warning = True
