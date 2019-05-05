@@ -2,7 +2,7 @@ from brother_ql.backends.helpers import send
 from brother_ql.backends import guess_backend
 from brother_ql.conversion import convert
 from brother_ql.raster import BrotherQLRaster
-from image_generate import generate_card
+from lib.image_generate import generate_card
 
 def print_label(text, qr=None, label="54",printer_identifier="/dev/usb/lp0", template="./templates/test.png", printer="QL-810W", cut=True, red=True, dpi_600=True, rotate="0"):
     # create a card from the template

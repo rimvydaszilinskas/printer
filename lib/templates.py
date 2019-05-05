@@ -2,7 +2,8 @@ import os
 import urllib.request
 
 def load_image(template):
-    return open(os.getcwd() + f"\\templates\\{template}")
+    print(template)
+    return open(os.getcwd() + "\\templates\\" + template)
 
 def cleanup_templates():
     for root, dirs, files in os.walk(os.getcwd() + "\\templates"):

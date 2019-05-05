@@ -6,6 +6,45 @@ ERROR_LED = None
 OK_LED = None
 
 class GPIO:
+    '''
+        GPIO Controller
+
+        GPIO indication types:
+            OK - Solid green
+
+    '''
+
+    @staticmethod
+    def warning():
+        GPIO.turn_off_all_led()
+        GPIO.blink_alert_led(on_time=0.5, off_time=0.5)
+
+    @staticmethod
+    def connecting():
+        GPIO.turn_off_all_led()
+        GPIO.blink_ok_led(on_time=0.1, off_time=0.1)
+
+    @staticmethod
+    def OK():
+        GPIO.turn_off_all_led()
+        GPIO.turn_ok_led()
+
+    @staticmethod
+    def created():
+        GPIO.turn_off_all_led()
+        GPIO.blink_ok_led(on_time=0.5, off_time=0.5)
+    
+    @staticmethod
+    def error():
+        GPIO.turn_off_all_led()
+        GPIO.turn_error_led()
+
+    @staticmethod
+    def writing():
+        GPIO.turn_off_all_led()
+        GPIO.turn_ok_led()
+        GPIO.blink_alert_led(on_time=0.2, off_time=0.2)
+    
     @staticmethod
     def is_gpio_active():
         return guess_device() == "rpi"

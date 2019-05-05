@@ -1,22 +1,31 @@
 import json
 import os
-import requests
-from lib.templates import cleanup_templates, template_exist, download_template
 from time import sleep
 
+import requests
+
+from lib.GPIO import GPIO
+from lib.templates import cleanup_templates, download_template, template_exist
+
 def dump_data(printer_to_dump):
+    GPIO.writing()
+
     printer = {
         "id": printer_to_dump.get("id"),
         "identifier": printer_to_dump.get("identifier"),
         "image_url": printer_to_dump.get("image_url", None)
     }
 
-    with open(os.getcwd() + f"\\conf\\device.json", "w") as outfile:
+    with open(os.getcwd() + "\\conf\\device.json", "w") as outfile:
         json.dump(printer, outfile)
     
     print("New device data saved.")
 
+    GPIO.OK()
+
 def handle_201(response):
+    GPIO.created()
+
     print("Status 201: Created")
 
     dump_data(response)
@@ -25,6 +34,8 @@ def handle_201(response):
     return None
 
 def handle_200(response, device, config):
+    GPIO.turn_ok_led(on=True)
+
     TEXT_FIELDS = [
         {
             "text": "full_name",
@@ -60,6 +71,8 @@ def handle_200(response, device, config):
     events = printer.get("events")
 
     if len(events) != 0:
+        GPIO.blink_alert_led(on_time=0.1, off_time=0.1)
+
         event = events[0]
         event_id = event.get("id")
         ticketbuttler_id = event.get("tbid")
@@ -113,9 +126,12 @@ def handle_200(response, device, config):
     
     PRINT_CONFIG["textfields"] = TEXT_FIELDS
 
+    GPIO.OK()
     return PRINT_CONFIG
 
 def handle_error(response):
+    GPIO.error()
+
     print("Error " + {response.get('status')} + ": " + {response.get('message', response.get('response'))})
     print("Waiting for restart")
 
@@ -134,30 +150,32 @@ def setup():
                 3.2.2. Replace the old log with the new event log.
         4. Connect to socket
     """
+
     ROOT_PATH = os.getcwd()
 
-    config_file = open(ROOT_PATH + f"\\conf\\conf.json")
-    device_file = open(ROOT_PATH + f"\\conf\\device.json")
+    config_file = open(ROOT_PATH + "/conf/conf.json")
+    device_file = open(ROOT_PATH + "/conf/device.json")
     
     config = json.load(config_file)
     device = json.load(device_file)
 
-    request = requests.post(config.get("registration").get("URL"), data={
-        "secret": config.get("registration").get("secret"),
-        "identifier": device.get("identifier")
-    })
+    try:
+        request = requests.post(config.get("registration").get("URL"), data={
+            "secret": config.get("registration").get("secret"),
+            "identifier": device.get("identifier")
+        })
+    
+        if request.status_code == 200:
+            response = json.loads(request.text)
 
-    if request.status_code == 200:
-        response = json.loads(request.text)
+            return handle_200(response, device, config)
+        elif request.status_code == 201:
+            response = json.loads(request.text)
 
-        return handle_200(response, device, config)
-    elif request.status_code == 201:
-        response = json.loads(request.text)
+            return handle_201(response)
+        else:
+            response = json.loads(request.text)
 
-        return handle_201(response)
-    else:
-        response = json.loads(request.text)
-
-        return handle_error(response)
-
-
+            return handle_error(response)
+    except:
+        return "Error"

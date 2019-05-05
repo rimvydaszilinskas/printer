@@ -2,6 +2,7 @@ import websocket
 import json
 
 from lib.brother_ql_send import print_label
+from lib.GPIO import GPIO
 
 class WS:
     def __init__(self, config):
@@ -37,12 +38,15 @@ class WS:
             print("Skipping print")
     
     def on_error(self, ws, error):
+        GPIO.error()
         print("Error: ", error)
 
     def on_open(self, ws):
+        GPIO.OK()
         print("Websocket Opened")
 
     def on_close(self, ws):
+        GPIO.connecting()
         print("Websocked closed")
 
     def ws_connect(self, URL, printer_id):
