@@ -33,9 +33,9 @@ def generate_qr(data, box_size=8, border=1, inverted = False, save = False, file
 
     if save:
         if filename is None:
-            img.save("./output/QR.png")
+            img.save("/home/pi/printer/output/QR.png")
         else:
-            img.save("./output/" + filename)
+            img.save("/home/pi/printer/output/" + filename)
 
     return img
 
@@ -44,7 +44,7 @@ def write_text(text, image, font_input=None, fill=(0, 0, 0)):
 
     W, H = image.size
 
-    font = ImageFont.truetype(font_input if font_input is not None else './fonts/Sanseriffic.otf', text['font_size'])
+    font = ImageFont.truetype(font_input if font_input is not None else '/home/pi/printer/fonts/Sanseriffic.otf', text['font_size'])
 
     if text['align'] == 'right':
         location = text['location']
@@ -53,7 +53,7 @@ def write_text(text, image, font_input=None, fill=(0, 0, 0)):
 
         while location[0] + w > W * 0.95:
             text['font_size'] -= 2
-            font = ImageFont.truetype(font_input if font_input is not None else './fonts/Sanseriffic.otf', text['font_size'])
+            font = ImageFont.truetype(font_input if font_input is not None else '/home/pi/printer/fonts/Sanseriffic.otf', text['font_size'])
 
             w, h = draw.textsize(text['text'], font=font)
     else:
@@ -64,7 +64,7 @@ def write_text(text, image, font_input=None, fill=(0, 0, 0)):
         while w > (0.8 * W):
             text['font_size'] -= 2
 
-            font = ImageFont.truetype(font_input if font_input is not None else './fonts/Sanseriffic.otf', text['font_size'])
+            font = ImageFont.truetype(font_input if font_input is not None else '/home/pi/printer/fonts/Sanseriffic.otf', text['font_size'])
 
             w, h = draw.textsize(text['text'], font=font)
 

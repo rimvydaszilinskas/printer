@@ -1,6 +1,7 @@
 import json
 import os
 from time import sleep
+import sys
 
 import requests
 
@@ -16,7 +17,7 @@ def dump_data(printer_to_dump):
         "image_url": printer_to_dump.get("image_url", None)
     }
 
-    with open(os.getcwd() + "\\conf\\device.json", "w") as outfile:
+    with open("/home/pi/printer/conf/device.json", "w") as outfile:
         json.dump(printer, outfile)
     
     print("New device data saved.")
@@ -51,8 +52,8 @@ def handle_200(response, device, config):
         "label": "62",
         "red": False,
         "dpi_600": False,
-        "template": "/templates/default.png",
-        "font": "/fonts/Sanseriffic.otf",
+        "template": "/home/pi/printer/templates/default.png",
+        "font": "/home/pi/printer/fonts/Sanseriffic.otf",
         "printer": "QL-810W",
         "cut": True,
         "qr": None
@@ -101,8 +102,8 @@ def handle_200(response, device, config):
 
             if image_url != None or image_url != "":
                 cleanup_templates()
-                PRINT_CONFIG["templates"] = os.getcwd() + "\\templates\\" + event_id + ".png"
-
+                PRINT_CONFIG["templates"] = "/home/pi/printer/templates/" + event_id + ".png"
+                
                 if not template_exist(event_id=event_id) or device["image_url"] != image_url:
                     print("Template does not exist.")
 
@@ -153,8 +154,8 @@ def setup():
 
     ROOT_PATH = os.getcwd()
 
-    config_file = open(ROOT_PATH + "/conf/conf.json")
-    device_file = open(ROOT_PATH + "/conf/device.json")
+    config_file = open("/home/pi/printer/conf/conf.json")
+    device_file = open("/home/pi/printer/conf/device.json")
     
     config = json.load(config_file)
     device = json.load(device_file)
@@ -164,7 +165,7 @@ def setup():
             "secret": config.get("registration").get("secret"),
             "identifier": device.get("identifier")
         })
-    
+        
         if request.status_code == 200:
             response = json.loads(request.text)
 
@@ -178,4 +179,5 @@ def setup():
 
             return handle_error(response)
     except:
+        print(sys.exc_info())
         return "Error"

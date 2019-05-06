@@ -4,7 +4,7 @@ from brother_ql.conversion import convert
 from brother_ql.raster import BrotherQLRaster
 from lib.image_generate import generate_card
 
-def print_label(text, qr=None, label="54",printer_identifier="/dev/usb/lp0", template="./templates/test.png", printer="QL-810W", cut=True, red=True, dpi_600=True, rotate="0"):
+def print_label(text, qr=None, label="54",printer_identifier="/dev/usb/lp0", template="/home/pi/printer/templates/test.png", printer="QL-810W", cut=True, red=True, dpi_600=True, rotate="0"):
     # create a card from the template
     # card = create_card(target_file=template, text=text, qr=qr, save=False)
     card = generate_card(target_file=template, text=text)

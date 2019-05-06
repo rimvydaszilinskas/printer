@@ -12,15 +12,24 @@ ROOT_DIR = os.getcwd()
 
 if __name__ == "__main__":
     GPIO.setup_leds()
+    GPIO.turn_off_all_led()
+
+    GPIO.blink_alert_led(on_time=0.05, off_time=0.05)
+
+    sleep(10)
 
     SETUP = setup()
 
     if isinstance(SETUP, str):
+        print(SETUP)
         print("Error occured")
         GPIO.error()
-        sleep(5)
+        
+        sleep(10)
+
+        os.system('sudo python3 /home/pi/printer/main.py')
     else:
-        with open(ROOT_DIR + "/conf/conf.json", "r") as conf:
+        with open("/home/pi/printer/conf/conf.json", "r") as conf:
             configuration = json.load(conf)
 
             URL = configuration.get("ticketbutler").get("URL")
