@@ -1,6 +1,6 @@
 {
     "ticketbutler" : {
-        "URL": "ws://ticketfix.moome.net/ws/print"
+        "URL": "WSURL"
     },
     "registration" : {
         "URL": "https://fierce-citadel-44696.herokuapp.com/api/printer",
